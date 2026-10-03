@@ -1,0 +1,32 @@
+# Example CI: run the robustness gate on every push and on a nightly schedule.
+# The job fails when the gate verdict is FAIL.
+
+name: robustness-gate
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "0 6 * * *"  # nightly
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+      - name: Run robustness gate
+        run: python examples/quickstart.py
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: robustness-report
+          path: |
+            report.md
+            report.json

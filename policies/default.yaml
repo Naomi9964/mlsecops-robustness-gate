@@ -1,0 +1,12 @@
+# Default gate policy. Thresholds are per (attack, epsilon budget).
+min_robust_accuracy:
+  - attack: fgsm
+    eps: 0.1
+    min_acc: 0.80
+  - attack: pgd
+    eps: 0.1
+    min_acc: 0.70
+
+# Fail the gate if clean accuracy regresses too far from the recorded baseline.
+baseline_clean_accuracy: 0.95
+max_clean_accuracy_drop: 0.05
