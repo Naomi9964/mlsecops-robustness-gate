@@ -56,6 +56,36 @@ results = gate.run()                                # results["verdict"] is PASS
 See [`.github/workflows/robogate.yml`](.github/workflows/robogate.yml) for the
 drop-in Actions workflow.
 
+## Second threat model: malware evasion
+
+The same gate idea, applied to malware detectors instead of image classifiers.
+The attacker perturbs a malware sample so the classifier calls it benign.
+
+| Piece | File |
+|---|---|
+| Synthetic PE-style features (64 dims; last 16 = appendable overlay region) + `MalwareMLP` detector | `robogate/malware_data.py` |
+| Evasion attacks: `FGSMevasion` (white-box, targeted at "benign"), `AppendEvasion` (steers only overlay dims toward the benign centroid — the realistic no-gradient attacker), `RandomEvasion` (baseline) | `robogate/malware_attacks.py` |
+| `MalwareGate`: detection rate → evasion suite → evasion rate / robust detection → policy → verdict → Markdown/JSON report | `robogate/malware_gate.py` |
+
+```python
+from robogate import (
+    DEFAULT_MALWARE_POLICY, MalwareGate, MalwareMLP, benign_centroid,
+    make_malware_attacks, make_malware_loaders, train_malware,
+)
+
+train_loader, test_loader = make_malware_loaders(n=2000)
+model = train_malware(MalwareMLP(), train_loader, epochs=10)
+attacks = make_malware_attacks(benign_centroid(train_loader))
+results = MalwareGate(model, test_loader, attacks,
+                      [0.1, 0.2, 0.3], DEFAULT_MALWARE_POLICY).run()
+```
+
+Run it: `python examples/malware_quickstart.py` → `malware_report.md`.
+The demo detector hits 100% clean detection but FAILs the gate: FGSM reaches
+~99% evasion at eps=0.2, and the gradient-free append attack still reaches
+~34% — a detector leaning on easily-spoofed overlay features is evadable.
+No real malware is used; plug in EMBER-style features to test a real detector.
+
 ## Roadmap
 
 - Stronger black-box attacks (Boundary, Square), certified-robustness checks
