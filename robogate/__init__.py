@@ -9,7 +9,7 @@ from .malware_attacks import (
 )
 from .malware_data import (
     MalwareMLP, benign_centroid, make_malware_loaders, make_pe_features,
-    train_malware,
+    train_malware, train_malware_adversarial,
 )
 from .malware_gate import (
     DEFAULT_MALWARE_POLICY, MalwareGate, check_malware, detection_rate,
@@ -28,7 +28,7 @@ __all__ = [
     "AppendEvasion", "EvasionAttack", "FGSMevasion", "RandomEvasion",
     "make_malware_attacks",
     "MalwareMLP", "benign_centroid", "make_malware_loaders", "make_pe_features",
-    "train_malware",
+    "train_malware", "train_malware_adversarial",
     "DEFAULT_MALWARE_POLICY", "MalwareGate", "check_malware", "detection_rate",
     "evaluate_evasion", "to_malware_json", "to_malware_markdown",
 ]

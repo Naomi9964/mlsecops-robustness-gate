@@ -86,6 +86,11 @@ The demo detector hits 100% clean detection but FAILs the gate: FGSM reaches
 ~34% — a detector leaning on easily-spoofed overlay features is evadable.
 No real malware is used; plug in EMBER-style features to test a real detector.
 
+Closing the loop with adversarial training: `python examples/malware_defended.py`
+trains on FGSM evasions mixed into each batch (`train_malware_adversarial`),
+then re-runs the gate — evasion drops to ~5% (FGSM) and ~0.5% (append) at
+eps=0.2 and the verdict flips to **PASS**. CI runs this defended gate.
+
 ## Roadmap
 
 - Stronger black-box attacks (Boundary, Square), certified-robustness checks
