@@ -1,5 +1,7 @@
 # Example CI: run the robustness gate on every push and on a nightly schedule.
-# The job fails when the gate verdict is FAIL.
+# Steps that FAIL by design (demos of the gate blocking a vulnerable target)
+# are marked continue-on-error; the hard checks are pytest and the defended
+# demos, which must PASS.
 
 name: robustness-gate
 
@@ -20,21 +22,31 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-      - name: Run robustness gate
+      - name: Run tests
+        run: python -m pytest tests/ -q
+      - name: Run image robustness gate (demo)
+        # FAILs by design: demonstrates the gate correctly blocking a
+        # vulnerable model. informational only, not a CI gate.
+        continue-on-error: true
         run: python examples/quickstart.py
       - name: Run malware evasion gate (defended model)
         # the undefended demo (malware_quickstart.py) FAILs by design and is
         # for local exploration; CI runs the adversarially-trained model,
         # which must PASS the gate
-        if: always()
         run: python examples/malware_defended.py
-      - name: Upload report
+      - name: Run RAG gate (defended generator)
+        # rag_quickstart.py FAILs by design (naive generator follows injected
+        # instructions); CI runs the defended generator, which must PASS
+        run: python examples/rag_defended.py
+      - name: Upload reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: robustness-report
+          name: robustness-reports
           path: |
             report.md
             report.json
             malware_report_defended.md
             malware_report_defended.json
+            rag_report_defended.md
+            rag_report_defended.json
