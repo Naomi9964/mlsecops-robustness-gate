@@ -18,7 +18,7 @@ flowchart LR
     T[Trigger: push / PR / nightly / manual] --> CLI[robogate gate]
     CLI --> L[1. Load: model + policy + data]
     L --> B[2. Baseline: clean accuracy]
-    B --> A[3. Attack suite: FGSM + PGD × eps budgets]
+    B --> A[3. Attack suite: FGSM · PGD · BIM · NES · Noise × eps budgets]
     A --> M[4. Metrics: robust acc, ASR]
     M --> P[5. Policy check: policies/default.yaml]
     P --> V{verdict}
@@ -32,7 +32,7 @@ Full architecture diagram: [`docs/architecture.svg`](docs/architecture.svg)
 
 | Stage | Detail |
 |---|---|
-| Attacks | FGSM and PGD (L_inf), pure-PyTorch implementations in `robogate/attacks.py` |
+| Attacks | FGSM, PGD, BIM (white-box L_inf), NES (black-box, query-only), Noise (random baseline) — pure-PyTorch implementations in `robogate/attacks.py` |
 | Budgets | epsilon in {0.05, 0.1, 0.2} by default |
 | Metrics | clean accuracy, per-(attack, eps) robust accuracy, attack success rate |
 | Policy | YAML thresholds: min robust accuracy per attack, max clean-accuracy drop vs baseline |
@@ -54,6 +54,5 @@ drop-in Actions workflow.
 
 ## Roadmap
 
-- Black-box attacks (query-efficient, no gradients)
-- Certified-robustness checks (randomized smoothing)
+- Stronger black-box attacks (Boundary, Square), certified-robustness checks
 - Model registry integration (MLflow) and trend dashboards

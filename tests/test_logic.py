@@ -9,8 +9,9 @@ import torch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from robogate import (
-    ATTACKS, DEFAULT_POLICY, FGSM, Gate, PGD, TinyCNN, accuracy,
-    check, evaluate_attack, make_loaders, to_json, to_markdown, train,
+    ATTACKS, BIM, DEFAULT_POLICY, FGSM, NESAttack, NoiseAttack, Gate, PGD,
+    TinyCNN, accuracy, check, evaluate_attack, make_loaders, to_json,
+    to_markdown, train,
 )
 
 
@@ -82,3 +83,29 @@ def test_clean_drop_violation():
               "baseline_clean_accuracy": 0.95, "max_clean_accuracy_drop": 0.05}
     verdict, violations = check(results, policy)
     assert verdict == "FAIL"
+
+
+def test_bim_respects_eps_ball(trained):
+    model, test_loader = trained
+    x, y = next(iter(test_loader))
+    xa = BIM(steps=5)(model, x, y, eps=0.1)
+    assert (xa - x).abs().max().item() <= 0.1 + 1e-6
+    assert xa.min().item() >= 0.0 and xa.max().item() <= 1.0
+
+
+def test_noise_baseline_is_valid_but_weak(trained):
+    model, test_loader = trained
+    clean = accuracy(model, test_loader)
+    m = evaluate_attack(model, test_loader, NoiseAttack(), eps=0.1)
+    assert 0.0 <= m["robust_acc"] <= clean + 1e-6
+
+
+def test_nes_blackbox_runs_and_respects_eps(trained):
+    torch.manual_seed(0)
+    model, test_loader = trained
+    clean = accuracy(model, test_loader)
+    m = evaluate_attack(model, test_loader, NESAttack(steps=10, samples=6), eps=0.2)
+    assert m["robust_acc"] <= clean + 1e-6  # never helps the defender
+    x, y = next(iter(test_loader))
+    xa = NESAttack(steps=5, samples=4)(model, x, y, eps=0.2)
+    assert (xa - x).abs().max().item() <= 0.2 + 1e-6

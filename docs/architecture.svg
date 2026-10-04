@@ -52,8 +52,8 @@
 
     <rect x="480" y="226" width="180" height="104" rx="10" fill="#ffffff" stroke="#2563eb" stroke-width="2.5"/>
     <text x="570" y="254" font-size="15" font-weight="700" text-anchor="middle" fill="#1e3a8a">3 · Attack Suite</text>
-    <text x="570" y="278" font-size="12.5" text-anchor="middle" fill="#334155">FGSM + PGD</text>
-    <text x="570" y="297" font-size="12.5" text-anchor="middle" fill="#334155">ε ∈ {0.05, 0.1, 0.2}</text>
+    <text x="570" y="278" font-size="12.5" text-anchor="middle" fill="#334155">FGSM · PGD · BIM · NES</text>
+    <text x="570" y="297" font-size="12.5" text-anchor="middle" fill="#334155">Noise baseline · ε ∈ {0.05, 0.1, 0.2}</text>
 
     <rect x="690" y="226" width="180" height="104" rx="10" fill="#ffffff" stroke="#2563eb" stroke-width="2.5"/>
     <text x="780" y="254" font-size="15" font-weight="700" text-anchor="middle" fill="#1e3a8a">4 · Metrics</text>
@@ -98,15 +98,15 @@
 
   <!-- attack detail -->
   <g>
-    <rect x="440" y="360" width="220" height="70" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
-    <text x="550" y="386" font-size="14" font-weight="700" text-anchor="middle" fill="#1e40af">FGSM</text>
-    <text x="550" y="408" font-size="12" text-anchor="middle" fill="#3730a3">single gradient step</text>
-    <rect x="680" y="360" width="220" height="70" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
-    <text x="790" y="386" font-size="14" font-weight="700" text-anchor="middle" fill="#1e40af">PGD · 20 steps</text>
-    <text x="790" y="408" font-size="12" text-anchor="middle" fill="#3730a3">random start, iterative</text>
-    <line x1="540" y1="330" x2="540" y2="356" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
-    <line x1="600" y1="330" x2="700" y2="356" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
-    <text x="550" y="452" font-size="12" text-anchor="middle" fill="#64748b">white-box · L∞ ball · pixels clipped to [0, 1]</text>
+    <rect x="400" y="360" width="250" height="70" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+    <text x="525" y="386" font-size="14" font-weight="700" text-anchor="middle" fill="#1e40af">White-box</text>
+    <text x="525" y="408" font-size="12" text-anchor="middle" fill="#3730a3">FGSM · BIM · PGD (L_inf)</text>
+    <rect x="670" y="360" width="250" height="70" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+    <text x="795" y="386" font-size="14" font-weight="700" text-anchor="middle" fill="#1e40af">Black-box</text>
+    <text x="795" y="408" font-size="12" text-anchor="middle" fill="#3730a3">NES query-only · Noise baseline</text>
+    <line x1="530" y1="330" x2="510" y2="356" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+    <line x1="610" y1="330" x2="720" y2="356" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="660" y="452" font-size="12" text-anchor="middle" fill="#64748b">white-box &amp; black-box · L∞ ball · pixels clipped to [0, 1]</text>
   </g>
 
   <!-- outputs -->
