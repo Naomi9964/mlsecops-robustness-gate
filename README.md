@@ -28,6 +28,10 @@ flowchart LR
 
 Full architecture diagram: [`docs/architecture.svg`](docs/architecture.svg)
 
+Model zoo (`robogate/model_zoo.py`): TinyCNN (default demo), MLP and DeepCNN
+for architecture-robustness comparison — see `examples/compare_models.py`.
+Chinese intro PDF: [`docs/robogate-intro.pdf`](docs/robogate-intro.pdf).
+
 ## What it measures
 
 | Stage | Detail |

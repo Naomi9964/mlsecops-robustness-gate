@@ -9,9 +9,9 @@ import torch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from robogate import (
-    ATTACKS, BIM, DEFAULT_POLICY, FGSM, NESAttack, NoiseAttack, Gate, PGD,
-    TinyCNN, accuracy, check, evaluate_attack, make_loaders, to_json,
-    to_markdown, train,
+    ATTACKS, BIM, DEFAULT_POLICY, FGSM, MODELS, DeepCNN, MLP, NESAttack,
+    NoiseAttack, Gate, PGD, TinyCNN, accuracy, check, evaluate_attack,
+    make_loaders, to_json, to_markdown, train,
 )
 
 
@@ -109,3 +109,14 @@ def test_nes_blackbox_runs_and_respects_eps(trained):
     x, y = next(iter(test_loader))
     xa = NESAttack(steps=5, samples=4)(model, x, y, eps=0.2)
     assert (xa - x).abs().max().item() <= 0.2 + 1e-6
+
+
+def test_zoo_models_train_and_gate_runs():
+    # every model in the zoo must train on the synthetic task and be gateable
+    train_loader, test_loader = make_loaders(n=800, seed=1)
+    for name, cls in MODELS.items():
+        model = train(cls(), train_loader, epochs=6, seed=1)
+        acc = accuracy(model, test_loader)
+        assert acc > 0.65, f"{name} failed to learn: {acc:.2%}"
+        m = evaluate_attack(model, test_loader, FGSM(), eps=0.1)
+        assert 0.0 <= m["robust_acc"] <= 1.0
