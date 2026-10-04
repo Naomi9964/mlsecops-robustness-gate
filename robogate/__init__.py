@@ -18,6 +18,16 @@ from .malware_gate import (
     to_malware_json, to_malware_markdown,
 )
 from .policy import DEFAULT_POLICY, check, load_policy
+from .rag_attacks import (
+    AuthorityInjection, DirectInjection, HiddenInjection, PoisonAttack,
+    RAG_ATTACKS,
+)
+from .rag_data import TFIDFRetriever, make_corpus, make_queries
+from .rag_gate import (
+    DEFAULT_RAG_POLICY, RAGGate, check_rag, clean_accuracy,
+    evaluate_rag_attack, to_rag_json, to_rag_markdown,
+)
+from .rag_targets import MockGenerator, OllamaGenerator, RAGSystem
 from .report import to_json, to_markdown
 
 __all__ = [
@@ -35,4 +45,10 @@ __all__ = [
     "evaluate_evasion_by_family",
     "DEFAULT_MALWARE_POLICY", "MalwareGate", "check_malware", "detection_rate",
     "evaluate_evasion", "to_malware_json", "to_malware_markdown",
+    "AuthorityInjection", "DirectInjection", "HiddenInjection", "PoisonAttack",
+    "RAG_ATTACKS",
+    "TFIDFRetriever", "make_corpus", "make_queries",
+    "DEFAULT_RAG_POLICY", "RAGGate", "check_rag", "clean_accuracy",
+    "evaluate_rag_attack", "to_rag_json", "to_rag_markdown",
+    "MockGenerator", "OllamaGenerator", "RAGSystem",
 ]

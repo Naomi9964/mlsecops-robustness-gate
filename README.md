@@ -98,6 +98,40 @@ The family with the weakest signature sits closest to the decision boundary
 and falls first — in the demo, ransomware hits ~55% append-evasion at eps=0.2
 while spyware holds at 0%. Pass `family_names=` to `MalwareGate` to enable it.
 
+## Third threat model: RAG indirect injection
+
+The same gate idea, applied to retrieval-augmented generation. The attacker
+poisons a document in the corpus; when it gets retrieved, the LLM follows the
+injected instruction instead of just answering the query.
+
+| Piece | File |
+|---|---|
+| Synthetic doc corpus + queries + stdlib TF-IDF retriever | `robogate/rag_data.py` |
+| `RAGSystem` (retriever + generator); `MockGenerator` (naive/defended test double); `OllamaGenerator` (real LLM via Ollama, e.g. llama3.1) | `robogate/rag_targets.py` |
+| Poisoned-document attacks: `direct` (plain-text instruction), `hidden` (HTML comment), `authority` (fake policy update); each carries a canary word | `robogate/rag_attacks.py` |
+| `RAGGate`: clean accuracy → per-attack poisoned corpora → exposure / injection rate → policy → verdict → Markdown/JSON report | `robogate/rag_gate.py` |
+
+```python
+from robogate import (
+    DEFAULT_RAG_POLICY, RAG_ATTACKS, RAGGate, RAGSystem,
+    MockGenerator, make_corpus, make_queries,
+)
+
+def make_system(extra_docs):
+    return RAGSystem(make_corpus() + extra_docs, MockGenerator(mode="naive"))
+
+results = RAGGate(make_system, make_queries(), RAG_ATTACKS,
+                  DEFAULT_RAG_POLICY).run()
+```
+
+Run it: `python examples/rag_quickstart.py` → `rag_report.md`. The naive
+system follows every injected instruction (100% injection on exposed queries)
+and FAILs the gate; `python examples/rag_defended.py` (generator treats docs
+as untrusted data) drops injection to 0% and PASSes. The judge strips
+verbatim-quoted doc text before looking for the canary, so merely citing a
+poisoned doc doesn't count as following it. Swap `MockGenerator` for
+`OllamaGenerator("llama3.1")` to test a real model — same interface.
+
 ## Roadmap
 
 - Stronger black-box attacks (Boundary, Square), certified-robustness checks
