@@ -91,6 +91,13 @@ trains on FGSM evasions mixed into each batch (`train_malware_adversarial`),
 then re-runs the gate — evasion drops to ~5% (FGSM) and ~0.5% (append) at
 eps=0.2 and the verdict flips to **PASS**. CI runs this defended gate.
 
+Per-family evasion: `python examples/malware_families.py` trains on a
+4-family mixture (ransomware, trojan, worm, spyware — `FAMILY_NAMES` in
+`robogate/malware_data.py`) and the report gains a per-family evasion table.
+The family with the weakest signature sits closest to the decision boundary
+and falls first — in the demo, ransomware hits ~55% append-evasion at eps=0.2
+while spyware holds at 0%. Pass `family_names=` to `MalwareGate` to enable it.
+
 ## Roadmap
 
 - Stronger black-box attacks (Boundary, Square), certified-robustness checks
